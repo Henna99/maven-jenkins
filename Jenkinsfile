@@ -1,11 +1,10 @@
 pipeline {
-  agent any
+  agent any // means run on any machine that is available to Jenkins
   tools {
-        maven "M3" 
+        maven "M3"
    }
-
+  // this is a dummy change
   stages {
-
       stage('Build Artifact') 
       {
             steps 
@@ -22,36 +21,45 @@ pipeline {
               echo "Running unit tests"
             }
       }
-      stage('Deploy') 
+      stage('Sonarqube Analysis - SAST') 
+      {
+        steps 
+        {
+           withSonarQubeEnv('SonarQube') 
+           {
+              sh "mvn sonar:sonar -Dsonar.projectKey=maven-jenkins-pipeline -Dsonar.host.url=http://35.242.163.51:9000/" 
+           }
+        }
+      }
+      stage('Dev Environment') 
+      { 
+          steps 
+          { 
+              echo "I'm now deploying to the dev environment" 
+          } 
+      }
+      stage('Test Environment') 
+      { 
+          steps 
+          { 
+              echo "I'm now deploying to the test or QA environment" 
+          } 
+      }
+      stage('UAT Environment') 
       { 
           steps 
           { 
               input('Continue to Deploy?') 
-              echo 'Deploying to Production Environment' 
+              echo 'Change Manager has approved?' 
           } 
       }
-    
-        
-           stage('mvn clean') 
-      {
-            steps 
-            {
-                sh "mvn clean verify sonar:sonar \
-                    -Dsonar.projectKey=maven-jenkins-pipeline \
-                    -Dsonar.host.url=http://35.246.3.252:9000 \
-                     -Dsonar.login=sqp_9d8a309ae8938a8ca8ddd7b274e075e2d0684f4c " 
-            }  
-       }
-      
-      stage('Sonarqube Analysis - SAST')  
+      stage('Production Environment') 
       { 
-        steps  
-        { 
-           withSonarQubeEnv('SonarQube')  
-           { 
-              sh "mvn sonar:sonar -Dsonar.projectKey=maven-jenkins-pipeline -Dsonar.host.url=http://35.246.3.252:9000/"  
-           } 
-        } 
-      } 
+          steps 
+          { 
+              input('Continue to Deploy?') 
+              echo 'Shall we go live' 
+          } 
+      }
     }
 }
