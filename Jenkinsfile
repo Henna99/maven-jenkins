@@ -39,7 +39,7 @@ pipeline {
                 sh "mvn clean verify sonar:sonar \
                     -Dsonar.projectKey=maven-jenkins-pipeline \
                     -Dsonar.host.url=http://35.246.3.252:9000 \
-                    -Dsonar.login=sqp_598863e090bb92008b0d0bb2f5b4425c497964e6 " 
+                     -Dsonar.login=sqp_9d8a309ae8938a8ca8ddd7b274e075e2d0684f4c " 
             }  
        }
       
