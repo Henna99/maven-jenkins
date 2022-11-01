@@ -3,11 +3,9 @@ pipeline {
   tools {
         maven "M3" 
    }
-    mvn clean verify sonar:sonar \
-  -Dsonar.projectKey=maven-jenkins-pipeline \
-  -Dsonar.host.url=http://35.246.3.252:9000 \
-  -Dsonar.login=sqp_598863e090bb92008b0d0bb2f5b4425c497964e6
+
   stages {
+
       stage('Build Artifact') 
       {
             steps 
@@ -32,6 +30,18 @@ pipeline {
               echo 'Deploying to Production Environment' 
           } 
       }
+    
+        
+           stage('mvn clean') 
+      {
+            steps 
+            {
+                  mvn clean verify sonar:sonar \
+                  -Dsonar.projectKey=maven-jenkins-pipeline \
+                -Dsonar.host.url=http://35.246.3.252:9000 \
+                -Dsonar.login=sqp_598863e090bb92008b0d0bb2f5b4425c497964e6 
+            }  
+       }
       
       stage('Sonarqube Analysis - SAST')  
       { 
